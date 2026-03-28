@@ -3,293 +3,270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RootX CrypTool</title>
+<title>RootX — Telegram Ban Protect</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg: #0d0f14;
     --surface: #141720;
     --border: #1f2433;
-    --border-focus: #ff6b2b;
     --accent: #ff6b2b;
     --accent2: #ff8c55;
     --text: #e8eaf0;
     --muted: #5a6080;
+    --green: #2dcc7a;
+    --red: #ff4f4f;
     --mono: 'DM Mono', monospace;
     --sans: 'DM Sans', sans-serif;
   }
-
   html, body {
-    height: 100%;
+    min-height: 100%;
     background: var(--bg);
     color: var(--text);
     font-family: var(--sans);
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    padding: 20px 16px;
   }
+  .wrap { width: 100%; max-width: 480px; }
 
-  .wrap {
-    width: 100%;
-    max-width: 480px;
-    padding: 0 16px;
-  }
+  .header { text-align: center; margin-bottom: 24px; }
+  .logo { font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 5px; }
+  h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+  h1 span { color: var(--accent); }
+  .subtitle { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 4px; letter-spacing: 0.05em; }
 
-  .header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; }
+  .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .card-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
 
-  .header .logo {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    opacity: 0.9;
-  }
-
-  .header h1 {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    color: var(--text);
-  }
-
-  .header h1 span {
-    color: var(--accent);
-  }
-
-  .card {
-    background: var(--surface);
+  .top-btns { display: flex; gap: 6px; }
+  .btn-sm {
+    background: none;
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 12px;
-    position: relative;
-  }
-
-  .card-label {
+    border-radius: 6px;
+    padding: 4px 9px;
     font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    font-size: 9px;
+    letter-spacing: 0.06em;
     color: var(--muted);
-    margin-bottom: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
   }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm.ok { border-color: var(--green); color: var(--green); }
 
-  .row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  input[type="text"] {
-    flex: 1;
+  textarea {
+    width: 100%;
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 10px 13px;
+    padding: 10px 12px;
     font-family: var(--mono);
     font-size: 13px;
     color: var(--text);
     outline: none;
+    resize: none;
     transition: border-color 0.2s;
-    min-width: 0;
+    line-height: 1.6;
+    height: 90px;
   }
-
-  input[type="text"]:focus {
-    border-color: var(--border-focus);
-  }
-
-  input[type="text"]::placeholder {
-    color: var(--muted);
-    opacity: 0.6;
-  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--muted); opacity: 0.45; }
 
   .btn-krdo {
+    width: 100%;
+    margin-top: 10px;
     background: var(--accent);
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 10px 16px;
+    padding: 11px;
     font-family: var(--sans);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    white-space: nowrap;
+    letter-spacing: 0.03em;
     transition: background 0.15s, transform 0.1s;
-    flex-shrink: 0;
   }
-
   .btn-krdo:hover { background: var(--accent2); }
-  .btn-krdo:active { transform: scale(0.97); }
-  .btn-krdo:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-krdo:active { transform: scale(0.98); }
 
-  .result-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 12px;
-    min-height: 32px;
-  }
+  .sep { height: 1px; background: var(--border); margin: 12px 0; }
 
-  .result-text {
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--accent);
-    letter-spacing: 0.04em;
-    flex: 1;
-    word-break: break-all;
-  }
+  .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .result-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
 
-  .result-text.empty {
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 400;
-    font-style: italic;
-  }
-
-  .btn-copy {
-    background: none;
+  .result-box {
+    background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 5px 10px;
+    border-radius: 8px;
+    padding: 10px 12px;
     font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
+    font-size: 13px;
+    color: var(--accent);
+    min-height: 52px;
+    word-break: break-all;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+  .result-box.empty { color: var(--muted); font-size: 11px; font-style: italic; }
+  .result-box.err { color: var(--red); font-size: 11px; }
+
+  .note {
+    background: #0d0f14;
+    border: 1px solid #1f2433;
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 4px;
+    font-family: var(--mono);
+    font-size: 11px;
     color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    flex-shrink: 0;
-    margin-left: 10px;
-    text-transform: uppercase;
+    line-height: 1.75;
   }
-
-  .btn-copy:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-copy.copied { border-color: #2dcc7a; color: #2dcc7a; }
-
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 4px 0 12px;
-  }
-
-  .spinner {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border: 2px solid rgba(255,107,43,0.3);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .err { color: #ff4f4f; font-size: 11px; font-family: var(--mono); margin-top: 8px; }
+  .note b { color: var(--accent); }
+  .note a { color: var(--accent2); text-decoration: none; }
+  .note a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 <div class="wrap">
+
   <div class="header">
     <div class="logo">RootX India</div>
-    <h1>Cryp<span>Tool</span></h1>
+    <h1>Telegram <span>Ban Protect</span></h1>
+    <div class="subtitle">offline · base64 · no server</div>
   </div>
 
   <!-- Encrypt -->
   <div class="card">
-    <div class="card-label">Encrypt</div>
-    <div class="row">
-      <input type="text" id="encIn" placeholder="Text to encrypt…" autocomplete="off" spellcheck="false">
-      <button class="btn-krdo" id="encBtn" onclick="_x(0)">Krdo</button>
+    <div class="card-top">
+      <div class="card-label">Encode</div>
+      <div class="top-btns">
+        <button class="btn-sm" id="encPaste" onclick="doPaste('enc')">Paste</button>
+        <button class="btn-sm" id="encClear" onclick="doClear('enc')">Clear</button>
+      </div>
     </div>
-    <div class="divider"></div>
-    <div class="result-row">
-      <span class="result-text empty" id="encOut">—</span>
-      <button class="btn-copy" id="encCopy" onclick="_cp(0)" style="display:none">Copy</button>
+    <textarea id="encIn" placeholder="Type or paste text here…" spellcheck="false"></textarea>
+    <button class="btn-krdo" onclick="doEncode()">Encode → Krdo</button>
+    <div class="sep"></div>
+    <div class="result-header">
+      <div class="result-label">Result</div>
+      <button class="btn-sm" id="encCopy" onclick="doCopy('enc')">Copy</button>
     </div>
-    <div class="err" id="encErr"></div>
+    <div class="result-box empty" id="encOut">—</div>
   </div>
 
   <!-- Decrypt -->
   <div class="card">
-    <div class="card-label">Decrypt</div>
-    <div class="row">
-      <input type="text" id="decIn" placeholder="Text to decrypt…" autocomplete="off" spellcheck="false">
-      <button class="btn-krdo" id="decBtn" onclick="_x(1)">Krdo</button>
+    <div class="card-top">
+      <div class="card-label">Decode</div>
+      <div class="top-btns">
+        <button class="btn-sm" id="decPaste" onclick="doPaste('dec')">Paste</button>
+        <button class="btn-sm" id="decClear" onclick="doClear('dec')">Clear</button>
+      </div>
     </div>
-    <div class="divider"></div>
-    <div class="result-row">
-      <span class="result-text empty" id="decOut">—</span>
-      <button class="btn-copy" id="decCopy" onclick="_cp(1)" style="display:none">Copy</button>
+    <textarea id="decIn" placeholder="Paste encoded text here…" spellcheck="false"></textarea>
+    <button class="btn-krdo" onclick="doDecode()">Decode → Krdo</button>
+    <div class="sep"></div>
+    <div class="result-header">
+      <div class="result-label">Result</div>
+      <button class="btn-sm" id="decCopy" onclick="doCopy('dec')">Copy</button>
     </div>
-    <div class="err" id="decErr"></div>
+    <div class="result-box empty" id="decOut">—</div>
   </div>
+
+  <!-- Note -->
+  <div class="note">
+    YE TO SIMPLE BASE64 WLA H<br>
+    PR AGAR KISI APNE APP YA WEB KE LIYE<br>
+    ENTERPRISES LEVEL SECURITY CHAIYE<br>
+    TO DM ME <b><a href="https://t.me/simpleguy444" target="_blank">@simpleguy444</a></b>
+  </div>
+
 </div>
 
 <script>
-// Obfuscated core logic
-(function(_0x4a1b,_0x3e2f){var _0xf1=function(_0xa){return _0x4a1b[_0xa]};window['_cfg']={_0xf1(0):_0xf1(1),_0xf1(2):_0xf1(3)}}(['_k','Rootx','_b','https://personal-lovat-sigma.vercel.app/'],{}));
+var _r = { enc: null, dec: null };
 
-var _$={
-  _q:function(s){return document.getElementById(s)},
-  _r:[null,null],
-  _s:['enc','dec']
-};
+function doEncode() {
+  var val = document.getElementById('encIn').value;
+  var out = document.getElementById('encOut');
+  if (!val) { out.textContent = 'Input is empty.'; out.className = 'result-box err'; _r.enc = null; return; }
+  try {
+    // encode each line separately to preserve newlines exactly
+    var lines = val.split('\n');
+    var encoded = lines.map(function(l) { return btoa(unescape(encodeURIComponent(l))); }).join('\n');
+    out.textContent = encoded;
+    out.className = 'result-box';
+    _r.enc = encoded;
+  } catch(e) {
+    out.textContent = 'Error: ' + e.message;
+    out.className = 'result-box err';
+    _r.enc = null;
+  }
+}
 
-function _x(t){
-  var pfx=_$._s[t],inp=_$.q(pfx+'In'),out=_$.q(pfx+'Out'),
-      btn=_$.q(pfx+'Btn'),err=_$.q(pfx+'Err'),cpy=_$.q(pfx+'Copy');
-  _$.q=function(id){return document.getElementById(id)};
-  var inp=document.getElementById(pfx+'In'),
-      out=document.getElementById(pfx+'Out'),
-      btn=document.getElementById(pfx+'Btn'),
-      err=document.getElementById(pfx+'Err'),
-      cpy=document.getElementById(pfx+'Copy');
-  var v=inp.value.trim();
-  if(!v){err.textContent='Input is empty.';return;}
-  err.textContent='';
-  btn.disabled=true;
-  btn.innerHTML='<span class="spinner"></span>';
-  out.textContent='—';out.className='result-text empty';cpy.style.display='none';
-  var _m=t===0?'encrypt':'decrypt';
-  var _u=window._cfg._b+'?key='+window._cfg._k+'&'+_m+'='+encodeURIComponent(v);
-  fetch(_u).then(function(r){return r.json()}).then(function(d){
-    var res=d&&d['\x72\x65\x73\x70\x6f\x6e\x73\x65'];
-    if(res){
-      out.textContent=res;out.className='result-text';
-      _$._r[t]=res;cpy.style.display='inline-block';
-    } else {out.textContent='No response';out.className='result-text empty';}
-  }).catch(function(){
-    err.textContent='Request failed.';
-  }).finally(function(){
-    btn.disabled=false;btn.innerHTML='Krdo';
+function doDecode() {
+  var val = document.getElementById('decIn').value.trim();
+  var out = document.getElementById('decOut');
+  if (!val) { out.textContent = 'Input is empty.'; out.className = 'result-box err'; _r.dec = null; return; }
+  try {
+    var lines = val.split('\n');
+    var decoded = lines.map(function(l) {
+      var t = l.trim();
+      if (!t) return '';
+      return decodeURIComponent(escape(atob(t)));
+    }).join('\n');
+    out.textContent = decoded;
+    out.className = 'result-box';
+    _r.dec = decoded;
+  } catch(e) {
+    out.textContent = 'Error: Invalid Base64 input.';
+    out.className = 'result-box err';
+    _r.dec = null;
+  }
+}
+
+function doCopy(t) {
+  var v = _r[t];
+  if (!v) return;
+  navigator.clipboard.writeText(v).then(function() {
+    var b = document.getElementById(t + 'Copy');
+    b.textContent = 'Copied!';
+    b.className = 'btn-sm ok';
+    setTimeout(function() { b.textContent = 'Copy'; b.className = 'btn-sm'; }, 1500);
   });
 }
 
-function _cp(t){
-  var v=_$._r[t];if(!v)return;
-  navigator.clipboard.writeText(v).then(function(){
-    var b=document.getElementById(_$._s[t]+'Copy');
-    b.textContent='Copied!';b.className='btn-copy copied';
-    setTimeout(function(){b.textContent='Copy';b.className='btn-copy';},1500);
+function doPaste(t) {
+  navigator.clipboard.readText().then(function(txt) {
+    document.getElementById(t + 'In').value = txt;
+    var b = document.getElementById(t + 'Paste');
+    b.textContent = 'Pasted!';
+    b.className = 'btn-sm ok';
+    setTimeout(function() { b.textContent = 'Paste'; b.className = 'btn-sm'; }, 1200);
+  }).catch(function() {
+    // fallback: focus the textarea so user can Ctrl+V
+    document.getElementById(t + 'In').focus();
   });
 }
 
-// Enter key support
-['enc','dec'].forEach(function(p,i){
-  document.getElementById(p+'In').addEventListener('keydown',function(e){
-    if(e.key==='Enter')_x(i);
-  });
-});
+function doClear(t) {
+  document.getElementById(t + 'In').value = '';
+  var out = document.getElementById(t + 'Out');
+  out.textContent = '—';
+  out.className = 'result-box empty';
+  _r[t] = null;
+}
+
+// Enter = Shift+Enter for newline, Ctrl+Enter to run
+document.getElementById('encIn').addEventListener('keydown', function(e) { if (e.ctrlKey && e.key === 'Enter') doEncode(); });
+document.getElementById('decIn').addEventListener('keydown', function(e) { if (e.ctrlKey && e.key === 'Enter') doDecode(); });
 </script>
 </body>
 </html>
