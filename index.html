@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RootX CrypTool</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --border: #1f2433;
+    --border-focus: #ff6b2b;
+    --accent: #ff6b2b;
+    --accent2: #ff8c55;
+    --text: #e8eaf0;
+    --muted: #5a6080;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 480px;
+    padding: 0 16px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .header .logo {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.9;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .header h1 span {
+    color: var(--accent);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 0;
+  }
+
+  input[type="text"]:focus {
+    border-color: var(--border-focus);
+  }
+
+  input[type="text"]::placeholder {
+    color: var(--muted);
+    opacity: 0.6;
+  }
+
+  .btn-krdo {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+  }
+
+  .btn-krdo:hover { background: var(--accent2); }
+  .btn-krdo:active { transform: scale(0.97); }
+  .btn-krdo:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    min-height: 32px;
+  }
+
+  .result-text {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    flex: 1;
+    word-break: break-all;
+  }
+
+  .result-text.empty {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .btn-copy {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    margin-left: 10px;
+    text-transform: uppercase;
+  }
+
+  .btn-copy:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-copy.copied { border-color: #2dcc7a; color: #2dcc7a; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0 12px;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(255,107,43,0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .err { color: #ff4f4f; font-size: 11px; font-family: var(--mono); margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo">RootX India</div>
+    <h1>Cryp<span>Tool</span></h1>
+  </div>
+
+  <!-- Encrypt -->
+  <div class="card">
+    <div class="card-label">Encrypt</div>
+    <div class="row">
+      <input type="text" id="encIn" placeholder="Text to encrypt…" autocomplete="off" spellcheck="false">
+      <button class="btn-krdo" id="encBtn" onclick="_x(0)">Krdo</button>
+    </div>
+    <div class="divider"></div>
+    <div class="result-row">
+      <span class="result-text empty" id="encOut">—</span>
+      <button class="btn-copy" id="encCopy" onclick="_cp(0)" style="display:none">Copy</button>
+    </div>
+    <div class="err" id="encErr"></div>
+  </div>
+
+  <!-- Decrypt -->
+  <div class="card">
+    <div class="card-label">Decrypt</div>
+    <div class="row">
+      <input type="text" id="decIn" placeholder="Text to decrypt…" autocomplete="off" spellcheck="false">
+      <button class="btn-krdo" id="decBtn" onclick="_x(1)">Krdo</button>
+    </div>
+    <div class="divider"></div>
+    <div class="result-row">
+      <span class="result-text empty" id="decOut">—</span>
+      <button class="btn-copy" id="decCopy" onclick="_cp(1)" style="display:none">Copy</button>
+    </div>
+    <div class="err" id="decErr"></div>
+  </div>
+</div>
+
+<script>
+// Obfuscated core logic
+(function(_0x4a1b,_0x3e2f){var _0xf1=function(_0xa){return _0x4a1b[_0xa]};window['_cfg']={_0xf1(0):_0xf1(1),_0xf1(2):_0xf1(3)}}(['_k','Rootx','_b','https://personal-lovat-sigma.vercel.app/'],{}));
+
+var _$={
+  _q:function(s){return document.getElementById(s)},
+  _r:[null,null],
+  _s:['enc','dec']
+};
+
+function _x(t){
+  var pfx=_$._s[t],inp=_$.q(pfx+'In'),out=_$.q(pfx+'Out'),
+      btn=_$.q(pfx+'Btn'),err=_$.q(pfx+'Err'),cpy=_$.q(pfx+'Copy');
+  _$.q=function(id){return document.getElementById(id)};
+  var inp=document.getElementById(pfx+'In'),
+      out=document.getElementById(pfx+'Out'),
+      btn=document.getElementById(pfx+'Btn'),
+      err=document.getElementById(pfx+'Err'),
+      cpy=document.getElementById(pfx+'Copy');
+  var v=inp.value.trim();
+  if(!v){err.textContent='Input is empty.';return;}
+  err.textContent='';
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>';
+  out.textContent='—';out.className='result-text empty';cpy.style.display='none';
+  var _m=t===0?'encrypt':'decrypt';
+  var _u=window._cfg._b+'?key='+window._cfg._k+'&'+_m+'='+encodeURIComponent(v);
+  fetch(_u).then(function(r){return r.json()}).then(function(d){
+    var res=d&&d['\x72\x65\x73\x70\x6f\x6e\x73\x65'];
+    if(res){
+      out.textContent=res;out.className='result-text';
+      _$._r[t]=res;cpy.style.display='inline-block';
+    } else {out.textContent='No response';out.className='result-text empty';}
+  }).catch(function(){
+    err.textContent='Request failed.';
+  }).finally(function(){
+    btn.disabled=false;btn.innerHTML='Krdo';
+  });
+}
+
+function _cp(t){
+  var v=_$._r[t];if(!v)return;
+  navigator.clipboard.writeText(v).then(function(){
+    var b=document.getElementById(_$._s[t]+'Copy');
+    b.textContent='Copied!';b.className='btn-copy copied';
+    setTimeout(function(){b.textContent='Copy';b.className='btn-copy';},1500);
+  });
+}
+
+// Enter key support
+['enc','dec'].forEach(function(p,i){
+  document.getElementById(p+'In').addEventListener('keydown',function(e){
+    if(e.key==='Enter')_x(i);
+  });
+});
+</script>
+</body>
+</html>
